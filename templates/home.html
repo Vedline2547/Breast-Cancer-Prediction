@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Breast Cancer Prediction</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fdf2f8, #f3e8ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 15px;
+            color: #27272a;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(80, 30, 70, 0.15);
+        }
+
+        /* Header */
+
+        .header {
+            background: linear-gradient(135deg, #be185d, #7e22ce);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo {
+            width: 65px;
+            height: 65px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 18px;
+            font-size: 35px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            font-size: 15px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: auto;
+            opacity: 0.9;
+        }
+
+        /* Main content */
+
+        .content {
+            padding: 40px;
+        }
+
+        .section-heading {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .section-heading h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #27272a;
+        }
+
+        .section-heading p {
+            color: #71717a;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Form */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #3f3f46;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #e4e4e7;
+            border-radius: 10px;
+            font-size: 15px;
+            background: #fafafa;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #be185d;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(190, 24, 93, 0.08);
+        }
+
+        input::placeholder {
+            color: #a1a1aa;
+        }
+
+        .hint {
+            margin-top: 7px;
+            font-size: 12px;
+            color: #a1a1aa;
+        }
+
+        /* Button */
+
+        .predict-btn {
+            width: 100%;
+            margin-top: 32px;
+            padding: 17px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #be185d, #7e22ce);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(126, 34, 206, 0.25);
+        }
+
+        /* Prediction result */
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 14px;
+            background: #fdf2f8;
+            border: 1px solid #fbcfe8;
+            text-align: center;
+        }
+
+        .result h3 {
+            color: #9d174d;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .result p {
+            color: #831843;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.7;
+        }
+
+        .result .probability {
+            margin-top: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Disclaimer */
+
+        .disclaimer {
+            margin-top: 30px;
+            padding: 18px;
+            border-radius: 10px;
+            background: #fff7ed;
+            border-left: 4px solid #f97316;
+            color: #9a3412;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+
+        .footer {
+            padding: 22px;
+            text-align: center;
+            border-top: 1px solid #f4f4f5;
+            color: #a1a1aa;
+            font-size: 12px;
+        }
+
+        /* Mobile responsiveness */
+
+        @media (max-width: 600px) {
+            .content {
+                padding: 25px 20px;
+            }
+
+            .header {
+                padding: 35px 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Header -->
+
+        <div class="header">
+
+            <div class="logo">
+                ♡
+            </div>
+
+            <h1>Breast Cancer Prediction</h1>
+
+            <p>
+                An educational machine-learning application
+                powered by a Random Forest classification model.
+                Enter the required measurements to view a model prediction.
+            </p>
+
+        </div>
+
+        <!-- Main content -->
+
+        <div class="content">
+
+            <div class="section-heading">
+
+                <h2>Enter Tumor Measurements</h2>
+
+                <p>
+                    Fill in all five measurements below.
+                    Use the values from your dataset or demonstration input.
+                </p>
+
+            </div>
+
+            <!-- Form sends data to Flask -->
+
+            <form action="/" method="POST">
+
+                <div class="form-grid">
+
+                    <!-- Radius Mean -->
+
+                    <div class="form-group">
+
+                        <label for="query1">
+                            Radius Mean
+                        </label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            id="query1"
+                            name="query1"
+                            placeholder="e.g. 14.2"
+                            value="{{ query1 if query1 is defined else '' }}"
+                            required
+                        >
+
+                        <span class="hint">
+                            Mean distance from the center to points on the perimeter.
+                        </span>
+
+                    </div>
+
+                    <!-- Texture Mean -->
+
+                    <div class="form-group">
+
+                        <label for="query2">
+                            Texture Mean
+                        </label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            id="query2"
+                            name="query2"
+                            placeholder="e.g. 19.3"
+                            value="{{ query2 if query2 is defined else '' }}"
+                            required
+                        >
+
+                        <span class="hint">
+                            Mean variation in grayscale intensity.
+                        </span>
+
+                    </div>
+
+                    <!-- Perimeter Mean -->
+
+                    <div class="form-group">
+
+                        <label for="query3">
+                            Perimeter Mean
+                        </label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            id="query3"
+                            name="query3"
+                            placeholder="e.g. 92.5"
+                            value="{{ query3 if query3 is defined else '' }}"
+                            required
+                        >
+
+                        <span class="hint">
+                            Mean perimeter measurement.
+                        </span>
+
+                    </div>
+
+                    <!-- Smoothness Mean -->
+
+                    <div class="form-group">
+
+                        <label for="query4">
+                            Smoothness Mean
+                        </label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            id="query4"
+                            name="query4"
+                            placeholder="e.g. 0.10"
+                            value="{{ query4 if query4 is defined else '' }}"
+                            required
+                        >
+
+                        <span class="hint">
+                            Mean local variation in radius lengths.
+                        </span>
+
+                    </div>
+
+                    <!-- Compactness Mean -->
+
+                    <div class="form-group full">
+
+                        <label for="query5">
+                            Compactness Mean
+                        </label>
+
+                        <input
+                            type="number"
+                            step="any"
+                            id="query5"
+                            name="query5"
+                            placeholder="e.g. 0.08"
+                            value="{{ query5 if query5 is defined else '' }}"
+                            required
+                        >
+
+                        <span class="hint">
+                            Mean measure of tumor shape compactness.
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <!-- Submit button -->
+
+                <button type="submit" class="predict-btn">
+                    Analyze Prediction →
+                </button>
+
+            </form>
+
+            <!-- Display Flask prediction -->
+
+            {% if output1 %}
+
+            <div class="result">
+
+                <h3>Prediction Result</h3>
+
+                <p>{{ output1 }}</p>
+
+                {% if output2 %}
+
+                <p class="probability">
+                    {{ output2 }}
+                </p>
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+            <!-- Medical disclaimer -->
+
+            <div class="disclaimer">
+
+                <strong>Important Disclaimer:</strong>
+
+                This application is an educational machine-learning
+                demonstration. Its predictions are not a medical diagnosis
+                and should not be used to make medical decisions.
+                Always consult a qualified healthcare professional
+                for medical evaluation.
+
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+
+        <div class="footer">
+            Breast Cancer Prediction | Flask + Scikit-learn
+        </div>
+
+    </div>
+
+</body>
+
+</html>
