@@ -9,6 +9,7 @@ import pandas as pd
 from flask import Flask, request, render_template
 from sklearn.ensemble import RandomForestClassifier
 
+
 # --------------------------------------------------
 # 1. APPLICATION CONFIGURATION
 # --------------------------------------------------
@@ -112,7 +113,11 @@ def home():
 
     return render_template(
         "home.html",
-        query="",
+        query1="",
+        query2="",
+        query3="",
+        query4="",
+        query5="",
         output1=None,
         output2=None,
         error=None
@@ -130,30 +135,39 @@ def cancerPrediction():
 
         input_data = {}
 
-        # Collect and validate user inputs
-        for feature in FEATURES:
+        # Collect and validate the five form inputs
+        # HTML sends query1, query2, query3, query4, query5
 
-            value = request.form.get(feature, "").strip()
+        for i, feature in enumerate(FEATURES):
+
+            value = request.form.get(
+                f"query{i + 1}", ""
+            ).strip()
 
             if not value:
+
                 raise ValueError(
                     f"Please enter {feature.replace('_', ' ')}."
                 )
 
             try:
+
                 numeric_value = float(value)
 
             except ValueError:
+
                 raise ValueError(
                     f"{feature.replace('_', ' ')} must be a number."
                 )
 
             if not np.isfinite(numeric_value):
+
                 raise ValueError(
                     f"{feature.replace('_', ' ')} must be a valid number."
                 )
 
             if numeric_value <= 0:
+
                 raise ValueError(
                     f"{feature.replace('_', ' ')} must be greater than zero."
                 )
@@ -161,22 +175,26 @@ def cancerPrediction():
             input_data[feature] = numeric_value
 
         # Create prediction DataFrame
+
         input_df = pd.DataFrame(
             [input_data],
             columns=FEATURES
         )
 
         # Generate prediction
+
         prediction = model.predict(input_df)[0]
 
         probabilities = model.predict_proba(input_df)[0]
 
         # Get confidence for the predicted class
+
         predicted_index = list(model.classes_).index(prediction)
 
         confidence = probabilities[predicted_index] * 100
 
         # Interpret prediction
+
         if prediction == 1:
 
             output1 = (
@@ -191,7 +209,8 @@ def cancerPrediction():
 
         output2 = f"Model confidence: {confidence:.2f}%"
 
-        # Return results
+        # Return prediction results and preserve entered values
+
         return render_template(
             "home.html",
             output1=output1,
@@ -205,12 +224,19 @@ def cancerPrediction():
 
     except ValueError as e:
 
+        app.logger.warning("Input validation error: %s", e)
+
         return render_template(
             "home.html",
-            query="",
             error=str(e),
             output1=None,
-            output2=None
+            output2=None,
+            **{
+                f"query{i + 1}": request.form.get(
+                    f"query{i + 1}", ""
+                )
+                for i in range(5)
+            }
         )
 
     except Exception:
@@ -219,10 +245,15 @@ def cancerPrediction():
 
         return render_template(
             "home.html",
-            query="",
             error="An unexpected error occurred. Please try again.",
             output1=None,
-            output2=None
+            output2=None,
+            **{
+                f"query{i + 1}": request.form.get(
+                    f"query{i + 1}", ""
+                )
+                for i in range(5)
+            }
         )
 
 
