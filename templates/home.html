@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -192,6 +193,19 @@
             margin-top: 8px;
             font-size: 14px;
             font-weight: 500;
+        }
+
+        /* Input error */
+
+        .error-message {
+            margin-top: 25px;
+            padding: 18px;
+            border-radius: 10px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #b91c1c;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         /* Disclaimer */
@@ -415,6 +429,20 @@
                 </button>
 
             </form>
+
+            <!-- Display input errors -->
+
+            {% if error %}
+
+            <div class="error-message">
+
+                <strong>Input Error:</strong>
+
+                <p>{{ error }}</p>
+
+            </div>
+
+            {% endif %}
 
             <!-- Display Flask prediction -->
 
